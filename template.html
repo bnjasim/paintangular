@@ -2,7 +2,8 @@
 
   <div id="color-panel">
 	<div class="btn-group">
-		
+		<button class="btn" type="button" title="Black"  style="background-color:{{color}}"> 
+        </button>  
 		<button class="btn" type="button" ng-click="setColor('red')" title="Red" style="background-color:red">
 		</button>
 		<button class="btn" type="button" ng-click="setColor('lime')" title="Green" style="background-color:lime">	
@@ -50,6 +51,10 @@
     <button class="btn" type="button"  title="Clear Canvas">
         <div class="fa fa-trash"></div>
     </button>
+
+    <button class="btn" type="button"  title="Download">
+        <div class="fa fa-download"></div>
+    </button>
   </div>  
 
   <div id="paint">
@@ -58,35 +63,35 @@
       <div id="tools-panel">
 
         <div class="btn-group">
-            <button class="btn" type="button" data-divbtn="pencil" title="Pencil">
+            <button class="btn" type="button" ng-click="setTool('pencil')" title="Pencil">
                 <div class="fa fa-pencil"></div>
             </button>
 
-            <button class="btn" type="button" data-divbtn="line" title="Line">
+            <button class="btn" type="button" ng-click="setTool('line')" title="Line">
                 <b class="">&nbsp;|</b>
             </button>
 
-            <button class="btn" type="button" data-divbtn="eraser" title="Eraser">
+            <button class="btn" type="button" ng-click="setTool('eraser')" title="Eraser">
                 <div class="fa fa-eraser"></div>
             </button>
 
-            <button class="btn" type="button" data-divbtn="square" title="Square">
+            <button class="btn" type="button" ng-click="setTool('square')" title="Square">
                 <div class="fa fa-square-o"></div>
             </button>
 
-            <button class="btn" type="button" data-divbtn="fill" title="Fill">
+            <button class="btn" type="button" ng-click="setTool('fill')" title="Fill">
                 <div class="fa fa-tint"></div>
             </button>
 
-            <button class="btn" type="button" data-divbtn="circle" title="Circle">
+            <button class="btn" type="button" ng-click="setTool('circle')" title="Circle">
                 &nbsp;<div class="fa fa-circle-o"></div>
             </button>
 
-            <button class="btn" type="button" data-divbtn="text" title="Text">
+            <button class="btn" type="button" ng-click="setTool('text')" title="Text">
                 <div class="fa fa-font"></div>
             </button>
 
-            <button class="btn" type="button" data-divbtn="ellipse" title="Ellipse">
+            <button class="btn" type="button" ng-click="setTool('ellipse')" title="Ellipse">
                 <div class="fa fa-opera"></div>
             </button>
 
@@ -95,13 +100,15 @@
         </div>
 
         <form id="choose-size">
-            <div class="title">pick size</div>
-            <div class="radio-group">
+            <div class="title">choose size</div>
+            <div class="radio-group" ng-click="chooseSize(1)">
                 <input type="radio" name="size" value="1">1</div>
-            <div class="radio-group">
+            <div class="radio-group" ng-click="chooseSize(2)">
                 <input type="radio" name="size" value="2" checked="checked">2</div>
-            <div class="radio-group"><input type="radio" name="size" value="3">3</div>
-            <div class="radio-group"><input type="radio" name="size" value="4">4</div>
+            <div class="radio-group" ng-click="chooseSize(3)">
+                <input type="radio" name="size" value="3">3</div>
+            <div class="radio-group" ng-click="chooseSize(4)">
+                <input type="radio" name="size" value="4">4</div>
         
         <div id="clear-btn-mobile">
             <button class="btn" type="button"  title="Clear Canvas">
