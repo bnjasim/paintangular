@@ -46,7 +46,89 @@
   	</div>
   </div>
 
-  <button id="paint-clear" type="button" class="btn btn-default">Clear</button>
+  <div id="clear-btn">
+    <button class="btn" type="button"  title="Clear Canvas">
+        <div class="fa fa-trash"></div>
+    </button>
+  </div>  
+
+  <div id="paint">
+     
+      <!-- Tools panel -->
+      <div id="tools-panel">
+
+        <div class="btn-group">
+            <button class="btn" type="button" data-divbtn="pencil" title="Pencil">
+                <div class="fa fa-pencil"></div>
+            </button>
+
+            <button class="btn" type="button" data-divbtn="line" title="Line">
+                <b class="">&nbsp;|</b>
+            </button>
+
+            <button class="btn" type="button" data-divbtn="eraser" title="Eraser">
+                <div class="fa fa-eraser"></div>
+            </button>
+
+            <button class="btn" type="button" data-divbtn="square" title="Square">
+                <div class="fa fa-square-o"></div>
+            </button>
+
+            <button class="btn" type="button" data-divbtn="fill" title="Fill">
+                <div class="fa fa-tint"></div>
+            </button>
+
+            <button class="btn" type="button" data-divbtn="circle" title="Circle">
+                &nbsp;<div class="fa fa-circle-o"></div>
+            </button>
+
+            <button class="btn" type="button" data-divbtn="text" title="Text">
+                <div class="fa fa-font"></div>
+            </button>
+
+            <button class="btn" type="button" data-divbtn="ellipse" title="Ellipse">
+                <div class="fa fa-opera"></div>
+            </button>
+
+            
+            
+        </div>
+
+        <form id="choose-size">
+            <div class="title">pick size</div>
+            <div class="radio-group">
+                <input type="radio" name="size" value="1">1</div>
+            <div class="radio-group">
+                <input type="radio" name="size" value="2" checked="checked">2</div>
+            <div class="radio-group"><input type="radio" name="size" value="3">3</div>
+            <div class="radio-group"><input type="radio" name="size" value="4">4</div>
+        
+        <div id="clear-btn-mobile">
+            <button class="btn" type="button"  title="Clear Canvas">
+                <div class="fa fa-trash"></div>
+            </button>
+
+            <button class="btn" type="button"  title="Download">
+                <div class="fa fa-download"></div>
+            </button>
+        </div>      
+
+        </form>
+
+        
+
+          
+
+    </div>      
+
+
+
+      <!-- Canvas -->
+      <div id="sketch">
+        <canvas id="canvas"></canvas>
+      </div>
+
+  </div>    
 
 </div>
 
