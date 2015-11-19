@@ -24,6 +24,7 @@
 	width: 95%;
 	height: 340px;
 	margin: 0px 10px;
+	position: relative; /* for the absolute layout of tmp_canvas */
 }
 
 @media (min-width: 767px) { /* Non mobiles */
@@ -52,8 +53,8 @@
 
 #tmp_canvas {
 	position: absolute;
-	left: 10px; 
-	top: 10px;
+	left: 0px; 
+	top: 0px;
 	cursor: crosshair;
 }
 
@@ -171,7 +172,6 @@
 		max-width: 210px;
 	}
 }
-
 
 
 #color-panel .btn {
