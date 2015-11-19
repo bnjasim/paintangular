@@ -50,15 +50,25 @@ angular.module('main', [])
 			var temp_ctx = temp_canvas.getContext('2d');
 
 			/* Drawing on the temporary canvas and later copying into the canvas*/
-			temp_ctx.lineWidth = 3;
 			temp_ctx.lineJoin = 'round';
 			temp_ctx.lineCap = 'round';
-			temp_ctx.strokeStyle = 'black';
-			temp_ctx.fillStyle = 'black';
+			
 
 			var mouse = {x: 0, y: 0};
 			var start_mouse = {x:0, y:0};
+			// Pencil Points
+			var ppts = [];
 			
+			// Watch for color change, size change or tool change
+			scope.$watch('color', function(val) {
+				temp_ctx.strokeStyle = val;
+				temp_ctx.fillStyle = val;
+			});
+
+			scope.$watch('size', function(val) {
+				temp_ctx.lineWidth = val;
+			
+			});
 
 
 
@@ -71,6 +81,7 @@ angular.module('main', [])
 				mouse.y = typeof e.offsetY !== 'undefined' ? e.offsetY : e.layerY;
 				//console.log(mouse.x + " "+mouse.y);
 				// Saving all the points in an array
+				// ppts is for the smoothness of the pencil drawings, o/w it'll be jarred
 				ppts.push({x: mouse.x, y: mouse.y});
 
 				if (ppts.length < 3) {
