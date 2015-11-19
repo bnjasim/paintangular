@@ -9,7 +9,7 @@ angular.module('main', [])
 
 		controller: ['$scope', function($scope) {
 			$scope.color = 'black'; // default stroke color
-			$scope.tools = 'pencil';
+			$scope.tool = 'pencil';
 			$scope.size = 2;
 
 			$scope.setColor = function(c) {
@@ -40,6 +40,7 @@ angular.module('main', [])
 		require: '^paintangular',
 
 		link: function(scope, element, attrs, paintCtrl) {
+			
 			var canvas = element.children().eq(0)[0];
 			var temp_canvas = element.children().eq(1)[0];
 			canvas.width = element[0].clientWidth; // offsetWidth include borders and padding
@@ -58,6 +59,10 @@ angular.module('main', [])
 			var start_mouse = {x:0, y:0};
 			// Pencil Points
 			var ppts = [];
+			// eraser size minimum is 5
+			var eraser_width = 10;
+			// text minimum size 10px
+			var fontSize = '14px';
 			
 			// Watch for color change, size change or tool change
 			scope.$watch('color', function(val) {
@@ -65,16 +70,48 @@ angular.module('main', [])
 				temp_ctx.fillStyle = val;
 			});
 
-			scope.$watch('size', function(val) {
-				temp_ctx.lineWidth = val;
+			scope.$watch('size', function(s) {
+				
+				if (s===1) {
+					temp_ctx.lineWidth = 1;
+					eraser_width = 5;
+					fontSize = '10px';
+				}
+				if (s===2) {
+					temp_ctx.lineWidth = 3;
+					eraser_width = 10;
+					fontSize = '14px';
+				}
+				if (s===3) {
+					temp_ctx.lineWidth = 6;
+					eraser_width = 15;
+					fontSize = '18px';
+				}
+				if (s===4) {
+					temp_ctx.lineWidth = 10;
+					eraser_width = 20;
+					fontSize = '22px';
+				}
 			
 			});
 
+			// watch for tool change, if eraser hide the crosshair
+			scope.$watch('tool', function(tool, prev_tool) {
+				//console.log('prev_tool '+prev_tool);
+				temp_canvas.removeEventListener('mousemove', tools_func[prev_tool], false);
+				
+				if (tool === 'eraser') {
+					temp_canvas.addEventListener('mousemove', move_eraser, false);
+					temp_canvas.style.cursor = 'none';
+				}
+				else {
+					temp_canvas.removeEventListener('mousemove', move_eraser, false);	
+					temp_canvas.style.cursor = 'crosshair';
+					temp_ctx.clearRect(0, 0, temp_canvas.width, temp_canvas.height);
+				}
+			});
 
-
-
-
-			// paint functions
+			// mousemove paint functions
 			var paint_pencil = function(e) {
 
 				mouse.x = typeof e.offsetX !== 'undefined' ? e.offsetX : e.layerX;
@@ -437,8 +474,9 @@ angular.module('main', [])
 				temp_canvas.removeEventListener('mousemove', tools_func[tool], false);			
 				// Writing down to real canvas now
 				// text-tool is managed when textarea.blur() event
-				if (tool !='text') {
-					ctx.drawImage(temp_canvas, 0, 0);
+				if (tool !=='text') {
+					if (tool !=='eraser')
+						ctx.drawImage(tmp_canvas, 0, 0);
 					// keep the image in the undo_canvas
 					//undo_canvas_top = next_undo_canvas(undo_canvas_top);
 					//var uctx = undo_canvas[undo_canvas_top]['uctx'];
