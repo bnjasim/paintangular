@@ -201,4 +201,5 @@
     font: 14px;
     overflow: hidden;
     white-space: nowrap;
+    background-color: transparent;
 }

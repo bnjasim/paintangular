@@ -43,6 +43,9 @@ angular.module('main', [])
 			
 			var canvas = element.children().eq(0)[0];
 			var temp_canvas = element.children().eq(1)[0];
+			// A temporary canvas is required because we have to continuously redraw a shpae
+			// to give live feel of drawing. eg. while drawing a circle, circles of radii 
+			// starting from 0 is drawn. But only upon 'mouseup', the final cirlce is copied to canvas
 			canvas.width = element[0].clientWidth; // offsetWidth include borders and padding
 			canvas.height = element[0].clientHeight;
 			temp_canvas.width = canvas.width;
@@ -250,12 +253,12 @@ angular.module('main', [])
 		    	var width = Math.abs(mouse.x - start_mouse.x);
 		    	var height = Math.abs(mouse.y - start_mouse.y);
 		     
-		    	textarea.style.left = x + 'px';
-		    	textarea.style.top = y + 'px';
-		    	textarea.style.width = width + 'px';
-		    	textarea.style.height = height + 'px';
+		    	text_tool.style.left = x + 'px';
+		    	text_tool.style.top = y + 'px';
+		    	text_tool.style.width = width + 'px';
+		    	text_tool.style.height = height + 'px';
 		     
-		    	textarea.style.display = 'block';
+		    	text_tool.style.display = 'block';
 			}
 
 			var paint_eraser = function(e) {
@@ -272,7 +275,7 @@ angular.module('main', [])
 			// Event listeners
 			// Mouse-Down 
 			temp_canvas.addEventListener('mousedown', function(e) {
-				
+				console.log('mousedown')	
 				mouse.x = typeof e.offsetX !== 'undefined' ? e.offsetX : e.layerX;
 				mouse.y = typeof e.offsetY !== 'undefined' ? e.offsetY : e.layerY;
 				start_mouse.x = mouse.x;
@@ -314,7 +317,9 @@ angular.module('main', [])
 
 		    	if (tool === 'text') {
 		    		temp_canvas.addEventListener('mousemove', paint_text, false);
-		    		textarea.style.display = 'none'; // important to hide when clicked outside
+		    		text_tool.style.display = 'none'; // important to hide when clicked outside
+		    		text_tool.style.color = temp_ctx.strokeStyle;
+					text_tool.style['font-size'] = fontSize;
 		    	}
 
 		    	if (tool === 'eraser') {
@@ -387,6 +392,98 @@ angular.module('main', [])
 				
 			}, false); // event listener
 				
+			
+
+			var tools_func = {'pencil':paint_pencil, 'line':paint_line, 'square':paint_square, 
+					'circle':paint_circle, 'ellipse':paint_ellipse, 'eraser':paint_eraser,
+					'text':paint_text};
+
+			//console.log(tmp_canvas === temp_canvas) //true in chrome and IE. id is available in window
+			temp_canvas.addEventListener('mouseup', function() {
+				console.log('mouseup')	;
+				var tool = scope.tool;	
+				temp_canvas.removeEventListener('mousemove', tools_func[tool], false);			
+				// Writing down to real canvas now
+				// text-tool is managed when textarea.blur() event
+				if (tool !=='text') {
+					if (tool !=='eraser')
+						ctx.drawImage(temp_canvas, 0, 0);
+					// keep the image in the undo_canvas
+					//undo_canvas_top = next_undo_canvas(undo_canvas_top);
+					//var uctx = undo_canvas[undo_canvas_top]['uctx'];
+					//uctx.clearRect(0, 0, canvas.width, canvas.height);
+					//uctx.drawImage(canvas, 0, 0);
+					//undo_canvas[undo_canvas_top]['redoable'] = false;
+				}
+
+
+				// Clearing tmp canvas
+				temp_ctx.clearRect(0, 0, temp_canvas.width, temp_canvas.height);
+				
+				// Emptying up Pencil Points
+				ppts = [];
+			}, false);
+
+
+			// text-tool
+			var text_tool = document.createElement('textarea');
+			text_tool.id = 'text_tool'; // create only one, change the absolute positioning
+			sketch.appendChild(text_tool);
+
+
+			text_tool.addEventListener('mouseup', function(e) {
+				temp_canvas.removeEventListener('mousemove', paint_text, false);
+			}, false);
+
+			// set the color
+			text_tool.addEventListener('mousedown', function(e){
+				text_tool.style.color = temp_ctx.strokeStyle;
+				text_tool.style['font-size'] = fontSize;
+			}, false);
+			
+
+			text_tool.addEventListener('blur', function(e) {
+				var text_lines = text_tool.value.split('\n');
+					var comp_style = window.getComputedStyle(text_tool);
+		    		var fs = comp_style.getPropertyValue('font-size');
+		    		
+		    		var ff = comp_style.getPropertyValue('font-family');
+		    
+		    		temp_ctx.font = fs + ' ' + ff;
+		    		temp_ctx.textBaseline = 'bottom'; // bottom, middle, alphabetic, hanging
+		     
+		    		for (var n = 0; n < text_lines.length; n++) {
+		        		var line = text_lines[n];
+		         		
+		         		// consider padding of the text_tool
+		        		temp_ctx.fillText(
+		            		line,
+		            		parseInt(text_tool.style.left) + 8,
+		            		parseInt(text_tool.style.top) + 2 +
+		            			parseInt(comp_style.lineHeight) + n*parseInt(fs)
+		        		);    		
+		        		  
+		    		}
+		     
+		    		// Writing down to real canvas now
+		    		ctx.drawImage(temp_canvas, 0, 0);
+		    		text_tool.style.display = 'none';
+		    		text_tool.value = '';
+		    		// Clearing tmp canvas
+					temp_ctx.clearRect(0, 0, temp_canvas.width, temp_canvas.height);
+
+					// keep the image in the undo_canvas
+					//undo_canvas_top = next_undo_canvas(undo_canvas_top);
+					//var uctx = undo_canvas[undo_canvas_top]['uctx'];
+					//uctx.clearRect(0, 0, canvas.width, canvas.height);
+					//uctx.drawImage(canvas, 0, 0);
+					//undo_canvas[undo_canvas_top]['redoable'] = false;
+			});
+
+
+
+
+			// uitility functions
 			// for filling	
 			var find_left_most_similar_pixel = function(pix, pos, target_color) {
 				var y = Math.floor(pos/(4*canvas.width));
@@ -461,37 +558,6 @@ angular.module('main', [])
 
 				return 'white';
 			}
-
-
-			var tools_func = {'pencil':paint_pencil, 'line':paint_line, 'square':paint_square, 
-					'circle':paint_circle, 'ellipse':paint_ellipse, 'eraser':paint_eraser,
-					'text':paint_text};
-
-
-			tmp_canvas.addEventListener('mouseup', function() {
-				
-				var tool = scope.tool;	
-				temp_canvas.removeEventListener('mousemove', tools_func[tool], false);			
-				// Writing down to real canvas now
-				// text-tool is managed when textarea.blur() event
-				if (tool !=='text') {
-					if (tool !=='eraser')
-						ctx.drawImage(tmp_canvas, 0, 0);
-					// keep the image in the undo_canvas
-					//undo_canvas_top = next_undo_canvas(undo_canvas_top);
-					//var uctx = undo_canvas[undo_canvas_top]['uctx'];
-					//uctx.clearRect(0, 0, canvas.width, canvas.height);
-					//uctx.drawImage(canvas, 0, 0);
-					//undo_canvas[undo_canvas_top]['redoable'] = false;
-				}
-
-
-				// Clearing tmp canvas
-				temp_ctx.clearRect(0, 0, temp_canvas.width, temp_canvas.height);
-				
-				// Emptying up Pencil Points
-				ppts = [];
-			}, false);
 
 	
 		}	
