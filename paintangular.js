@@ -11,6 +11,7 @@ angular.module('main', [])
 			$scope.color = 'black'; // default stroke color
 			$scope.tool = 'pencil';
 			$scope.size = 2;
+			$scope.clear = false;
 
 			$scope.setColor = function(c) {
 				$scope.color = c;
@@ -26,6 +27,14 @@ angular.module('main', [])
 				$scope.size = s;
 				console.log(s);
 			}			
+
+			$scope.cls = function() {
+				$scope.clear = true;
+			}
+			// call this function from link of child directive
+			this.noClear = function() {
+				$scope.clear = false;
+			}
 		}],
 
 		templateUrl: "template.html"
@@ -113,6 +122,22 @@ angular.module('main', [])
 					temp_ctx.clearRect(0, 0, temp_canvas.width, temp_canvas.height);
 				}
 			});
+
+			// watch for clear button click
+			scope.$watch('clear', function(c) {
+				if (c) {
+					ctx.clearRect(0, 0, temp_canvas.width, temp_canvas.height);
+					// keep the image in the undo_canvas
+					//undo_canvas_top = next_undo_canvas(undo_canvas_top);
+					//var uctx = undo_canvas[undo_canvas_top]['uctx'];
+					//uctx.clearRect(0, 0, canvas.width, canvas.height);
+					//uctx.drawImage(canvas, 0, 0);
+					//undo_canvas[undo_canvas_top]['redoable'] = false;
+
+					paintCtrl.noClear();
+				}
+			});
+
 
 			// mousemove paint functions
 			var paint_pencil = function(e) {
