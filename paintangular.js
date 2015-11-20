@@ -372,8 +372,7 @@ angular.module('main', [])
 
 			// Event listeners
 			// Mouse-Down 
-			temp_canvas.addEventListener('mousedown', function(e) {
-				console.log('mousedown')	
+			temp_canvas.addEventListener('mousedown', function(e) {	
 				mouse.x = typeof e.offsetX !== 'undefined' ? e.offsetX : e.layerX;
 				mouse.y = typeof e.offsetY !== 'undefined' ? e.offsetY : e.layerY;
 				start_mouse.x = mouse.x;
@@ -657,6 +656,42 @@ angular.module('main', [])
 				return 'white';
 			}
 
+
+			// touch
+			// Prevent scrolling when touching the canvas
+			temp_canvas.addEventListener("touchstart", function (e) {
+			    e.preventDefault();
+			    
+			    var touch = e.touches[0];
+			    var mouseEvent = new MouseEvent("mousedown", {
+				    clientX: touch.clientX,//typeof touch.offsetX !== 'undefined' ? touch.offsetX : touch.layerX,
+				    clientY: touch.clientY//typeof touch.offsetY !== 'undefined' ? touch.offsetY : touch.layerY
+			    });
+			    
+			    temp_canvas.dispatchEvent(mouseEvent);
+
+			}, false);
+
+			temp_canvas.addEventListener("touchend", function (e) {
+			  e.preventDefault();
+			  
+			  var mouseEvent = new MouseEvent("mouseup", {});
+  			  temp_canvas.dispatchEvent(mouseEvent);
+
+			}, false);
+
+			temp_canvas.addEventListener("touchmove", function (e) {
+			  e.preventDefault();
+
+			  var touch = e.touches[0];
+		  	  var mouseEvent = new MouseEvent("mousemove", {
+		      	clientX: touch.clientX,//typeof touch.offsetX !== 'undefined' ? touch.offsetX : touch.layerX,
+				clientY: touch.clientY//typeof touch.offsetY !== 'undefined' ? touch.offsetY : touch.layerY
+		  	  });
+
+		  	  temp_canvas.dispatchEvent(mouseEvent);
+
+			}, false);
 	
 		}	
 		
