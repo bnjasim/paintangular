@@ -12,6 +12,8 @@ angular.module('main', [])
 			$scope.tool = 'pencil';
 			$scope.size = 2;
 			$scope.clear = false;
+			$scope.ud = false;
+			$scope.rd = false;
 
 			$scope.setColor = function(c) {
 				$scope.color = c;
@@ -34,6 +36,22 @@ angular.module('main', [])
 			// call this function from link of child directive
 			this.noClear = function() {
 				$scope.clear = false;
+			}
+
+			$scope.undo = function() {
+				$scope.ud = true;
+			}
+
+			$scope.redo = function() {
+				$scope.rd = true;
+			}
+
+			this.noUndo = function() {
+				$scope.ud = false;
+			}
+
+			this.noRedo = function() {
+				$scope.rd = false;
 			}
 		}],
 
@@ -61,6 +79,33 @@ angular.module('main', [])
 			temp_canvas.height = canvas.height;
 			var ctx = canvas.getContext('2d');
 			var temp_ctx = temp_canvas.getContext('2d');
+
+			var undo_canvas = [];
+			var undo_canvas_num = 7;
+			for (var i=0; i<undo_canvas_num; ++i) {
+				var ucan = document.createElement('canvas');
+				ucan.width = canvas.width;
+				ucan.height = canvas.height;
+				var uctx = ucan.getContext('2d');
+				undo_canvas.push({'ucan':ucan, 'uctx':uctx, 'redoable':false});
+			}
+
+			var undo_canvas_top = 0; 
+
+			var next_undo_canvas = function(top) {
+				if (top === undo_canvas_num-1)
+					return 0;
+				else
+					return top+1;
+			}
+
+			var prev_undo_canvas = function(top) {
+				if (top === 0) 
+					return undo_canvas_num-1;
+				else
+					return  top-1;
+			}
+
 
 			/* Drawing on the temporary canvas and later copying into the canvas*/
 			temp_ctx.lineJoin = 'round';
@@ -137,6 +182,36 @@ angular.module('main', [])
 					paintCtrl.noClear();
 				}
 			});
+			// undoing
+			scope.$watch('ud', function(ud) {
+				if(ud) {
+					var prev = prev_undo_canvas(undo_canvas_top);
+					if (!undo_canvas[prev].redoable) {
+						var ucan = undo_canvas[prev]['ucan'];
+						ctx.clearRect(0, 0, canvas.width, canvas.height);
+						ctx.drawImage(ucan, 0, 0);
+						undo_canvas[undo_canvas_top].redoable = true;
+						undo_canvas_top = prev;
+					}
+
+					paintCtrl.noUndo();
+				}
+			});
+			// redoing
+			scope.$watch('rd', function(rd) {
+				if(rd) {
+					var next = next_undo_canvas(undo_canvas_top);
+					if (undo_canvas[next].redoable) {
+						var ucan = undo_canvas[next]['ucan'];
+						ctx.clearRect(0, 0, canvas.width, canvas.height);
+						ctx.drawImage(ucan, 0, 0);
+						undo_canvas[next].redoable = false;
+						undo_canvas_top = next;
+					}
+
+					paintCtrl.noRedo();
+				}
+			})
 
 
 			// mousemove paint functions
@@ -152,8 +227,6 @@ angular.module('main', [])
 				if (ppts.length < 3) {
 					var b = ppts[0];
 					temp_ctx.beginPath();
-					//ctx.moveTo(b.x, b.y);
-					//ctx.lineTo(b.x+50, b.y+50);
 					temp_ctx.arc(b.x, b.y, temp_ctx.lineWidth / 2, 0, Math.PI * 2, !0);
 					temp_ctx.fill();
 					temp_ctx.closePath();
@@ -434,11 +507,11 @@ angular.module('main', [])
 					if (tool !=='eraser')
 						ctx.drawImage(temp_canvas, 0, 0);
 					// keep the image in the undo_canvas
-					//undo_canvas_top = next_undo_canvas(undo_canvas_top);
-					//var uctx = undo_canvas[undo_canvas_top]['uctx'];
-					//uctx.clearRect(0, 0, canvas.width, canvas.height);
-					//uctx.drawImage(canvas, 0, 0);
-					//undo_canvas[undo_canvas_top]['redoable'] = false;
+					undo_canvas_top = next_undo_canvas(undo_canvas_top);
+					var uctx = undo_canvas[undo_canvas_top]['uctx'];
+					uctx.clearRect(0, 0, canvas.width, canvas.height);
+					uctx.drawImage(canvas, 0, 0);
+					undo_canvas[undo_canvas_top]['redoable'] = false;
 				}
 
 
@@ -498,11 +571,11 @@ angular.module('main', [])
 					temp_ctx.clearRect(0, 0, temp_canvas.width, temp_canvas.height);
 
 					// keep the image in the undo_canvas
-					//undo_canvas_top = next_undo_canvas(undo_canvas_top);
-					//var uctx = undo_canvas[undo_canvas_top]['uctx'];
-					//uctx.clearRect(0, 0, canvas.width, canvas.height);
-					//uctx.drawImage(canvas, 0, 0);
-					//undo_canvas[undo_canvas_top]['redoable'] = false;
+					undo_canvas_top = next_undo_canvas(undo_canvas_top);
+					var uctx = undo_canvas[undo_canvas_top]['uctx'];
+					uctx.clearRect(0, 0, canvas.width, canvas.height);
+					uctx.drawImage(canvas, 0, 0);
+					undo_canvas[undo_canvas_top]['redoable'] = false;
 			});
 
 
