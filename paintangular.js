@@ -14,6 +14,7 @@ angular.module('main', [])
 			$scope.clear = false;
 			$scope.ud = false;
 			$scope.rd = false;
+			$scope.down = false;
 
 			$scope.setColor = function(c) {
 				$scope.color = c;
@@ -53,6 +54,14 @@ angular.module('main', [])
 			this.noRedo = function() {
 				$scope.rd = false;
 			}
+
+			$scope.download = function() {
+				$scope.down = true;
+			}
+
+			this.noDownload = function() {
+				$scope.down = false;
+			}
 		}],
 
 		templateUrl: "template.html"
@@ -65,6 +74,7 @@ angular.module('main', [])
 	return {
 		restrict: 'A',
 		require: '^paintangular',
+		scope: true,
 
 		link: function(scope, element, attrs, paintCtrl) {
 			
@@ -210,6 +220,18 @@ angular.module('main', [])
 					}
 
 					paintCtrl.noRedo();
+				}
+			});
+
+			scope.$watch('down', function(d) {
+				if(d) {
+					var link = document.createElement('a');
+					link.href = canvas.toDataURL();
+					link.download = 'paint.png';
+					//window.location = canvas.toDataURL();
+					link.click();
+
+					paintCtrl.noDownload();
 				}
 			})
 
@@ -497,7 +519,7 @@ angular.module('main', [])
 
 			//console.log(tmp_canvas === temp_canvas) //true in chrome and IE. id is available in window
 			temp_canvas.addEventListener('mouseup', function() {
-				console.log('mouseup')	;
+				//console.log('mouseup')	;
 				var tool = scope.tool;	
 				temp_canvas.removeEventListener('mousemove', tools_func[tool], false);			
 				// Writing down to real canvas now
