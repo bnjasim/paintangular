@@ -77,9 +77,10 @@ angular.module('main', [])
 		scope: true,
 
 		link: function(scope, element, attrs, paintCtrl) {
-			
+			//element.css('background-color', 'red'); // set the background color
 			var canvas = element.children().eq(0)[0];
 			var temp_canvas = element.children().eq(1)[0];
+			var dragger = element.children().eq(2)[0];
 			// A temporary canvas is required because we have to continuously redraw a shpae
 			// to give live feel of drawing. eg. while drawing a circle, circles of radii 
 			// starting from 0 is drawn. But only upon 'mouseup', the final cirlce is copied to canvas
@@ -136,31 +137,33 @@ angular.module('main', [])
 			// text minimum size 10px
 			var fontSize = '14px';
 			
+			// no watching, we just simply assign the color when mousedown
 			// Watch for color change, size change or tool change
-			scope.$watch('color', function(val) {
-				temp_ctx.strokeStyle = val;
-				temp_ctx.fillStyle = val;
-			});
-
+			//scope.$watch('color', function(val) {
+			//	temp_ctx.strokeStyle = val;
+			//	temp_ctx.fillStyle = val;
+			//}); 
+			
+			// watch for size change, required because of move_eraser
 			scope.$watch('size', function(s) {
 				
 				if (s===1) {
-					temp_ctx.lineWidth = 1;
+					//temp_ctx.lineWidth = 1; // we assign this in mousedown
 					eraser_width = 5;
 					fontSize = '10px';
 				}
 				if (s===2) {
-					temp_ctx.lineWidth = 3;
+					//temp_ctx.lineWidth = 3;
 					eraser_width = 10;
 					fontSize = '14px';
 				}
 				if (s===3) {
-					temp_ctx.lineWidth = 6;
+					//temp_ctx.lineWidth = 6;
 					eraser_width = 15;
 					fontSize = '18px';
 				}
 				if (s===4) {
-					temp_ctx.lineWidth = 10;
+					//temp_ctx.lineWidth = 10;
 					eraser_width = 20;
 					fontSize = '22px';
 				}
@@ -227,7 +230,7 @@ angular.module('main', [])
 					paintCtrl.noRedo();
 				}
 			});
-
+			// download picture
 			scope.$watch('down', function(d) {
 				if(d) {
 					var link = document.createElement('a');
@@ -433,8 +436,14 @@ angular.module('main', [])
 				//console.log('mouseX: '+mouse.x+' mouseY: '+mouse.y)
 
 				start_mouse.x = mouse.x;
-		    	start_mouse.y = mouse.y;	
+		    	start_mouse.y = mouse.y;
+		    	console.log('mousedown: '+mouse.x+' '+mouse.y);
 		    	temp_ctx.clearRect(0, 0, temp_canvas.width, temp_canvas.height);
+
+		    	// Assign color & size
+		    	temp_ctx.strokeStyle = scope.color;
+				temp_ctx.fillStyle = scope.color;
+				temp_ctx.lineWidth = scope.size * (scope.size+1) / 2; // just for 1,3,6 & 10
 
 		    	var tool = scope.tool;
 				if (tool === 'pencil') {
@@ -635,8 +644,6 @@ angular.module('main', [])
 			});
 
 
-
-
 			// uitility functions
 			// for filling	
 			var find_left_most_similar_pixel = function(pix, pos, target_color) {
@@ -728,7 +735,7 @@ angular.module('main', [])
 					temp_canvas.removeEventListener('mousemove', tools_func[scope.tool], false);						  		
 			  	}
 			  
-
+			    //alert(touch.clientX + ' '+touch.clientY)
 			    var mouseEvent = new MouseEvent("mousedown", {
 				    clientX: touch.clientX,//typeof touch.offsetX !== 'undefined' ? touch.offsetX : touch.layerX,
 				    clientY: touch.clientY//typeof touch.offsetY !== 'undefined' ? touch.offsetY : touch.layerY
@@ -750,6 +757,8 @@ angular.module('main', [])
 			  e.preventDefault();
 			  e.stopPropagation();
 			  
+			  e.stopPropagation();
+
 			  var touch = e.touches[0];
 			  // for mozilla, hold first finger and draw with the second
 			  if (e.touches.length > 1) { 
@@ -767,6 +776,59 @@ angular.module('main', [])
 		  	  temp_canvas.dispatchEvent(mouseEvent);
 
 			}, false);
+
+
+			// Dragging to resize the canvas
+			var keep_canvas = document.createElement('canvas');
+			keep_canvas.width = canvas.width; // width doesn't change
+			var keep_ctx = keep_canvas.getContext('2d');
+			var flag = false;
+
+			dragger.addEventListener('mousedown', function(e) {
+				e.preventDefault();
+				console.log('Event listener added');
+				// it can't be dragger.addEventListener - it only decrease in size
+				document.addEventListener('mousemove', resize_canvas, false);
+				/*keep_ctx.drawImage(canvas, 0, 0);				
+
+				if (!flag) {
+					element[0].style.height = '200px';
+					canvas.height = 200;
+					temp_canvas.height = 200;
+					flag = true;
+				}
+				else {
+					element[0].style.height = '400px';
+					canvas.height = 400;
+					temp_canvas.height = 400;
+					flag = false;
+				}*/
+				//ctx.drawImage(keep_canvas, 0, 0);
+			});
+
+			document.addEventListener('mouseup', function(e) {
+				//console.log('Event listener removed');
+				document.removeEventListener('mousemove', resize_canvas, false);
+			});
+
+			var resize_canvas = function(e) {
+				var rect = temp_canvas.getBoundingClientRect();
+				var height = e.clientY - rect.top;
+				console.log('height '+height)
+
+				// keep the original picture as changing dimensions of the 
+				// canvas removes the image
+				keep_canvas.height = canvas.height;
+				keep_ctx.drawImage(canvas, 0, 0);								
+
+				element[0].style.height = height+'px';
+				canvas.height = height;
+				temp_canvas.height = height;
+				
+				// copy back the image
+				ctx.drawImage(keep_canvas, 0, 0);
+			}
+
 	
 		}	
 		

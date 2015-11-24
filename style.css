@@ -27,6 +27,15 @@
 	position: relative; /* for the absolute layout of tmp_canvas */
 }
 
+.resize-div {
+	height: 5px;
+	background-color: #e5e5e5;
+	cursor: n-resize;
+	width: 100%;
+	position: absolute;
+	bottom: 0px;
+}
+
 @media (min-width: 767px) { /* Non mobiles */
 	
 	#main-layout {
