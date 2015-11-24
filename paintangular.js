@@ -87,6 +87,11 @@ angular.module('main', [])
 			canvas.height = element[0].clientHeight;
 			temp_canvas.width = canvas.width;
 			temp_canvas.height = canvas.height;
+			// Disable scrolling, zooming etc
+			//temp_canvas.style.touchAction = 'none';
+			//canvas.style.touchAction = 'none';
+			//sketch.style.touchAction = 'none';
+
 			var ctx = canvas.getContext('2d');
 			var temp_ctx = temp_canvas.getContext('2d');
 
@@ -238,7 +243,7 @@ angular.module('main', [])
 
 			// mousemove paint functions
 			var paint_pencil = function(e) {
-
+				e.preventDefault();
 				//mouse.x = typeof e.offsetX !== 'undefined' ? e.offsetX : e.layerX;
 				//mouse.y = typeof e.offsetY !== 'undefined' ? e.offsetY : e.layerY;
 				var rect = temp_canvas.getBoundingClientRect();
@@ -715,6 +720,14 @@ angular.module('main', [])
 				e.stopPropagation();
 
 			    var touch = e.touches[0];
+			    // for mozilla, hold first finger and draw with the second
+			  	if (e.touches.length > 1) {
+			  		touch = e.touches[1];
+			  		ppts = []; // a new drawing
+			  		// remove event listeners
+					temp_canvas.removeEventListener('mousemove', tools_func[scope.tool], false);						  		
+			  	}
+			  
 
 			    var mouseEvent = new MouseEvent("mousedown", {
 				    clientX: touch.clientX,//typeof touch.offsetX !== 'undefined' ? touch.offsetX : touch.layerX,
@@ -738,6 +751,14 @@ angular.module('main', [])
 			  e.stopPropagation();
 			  
 			  var touch = e.touches[0];
+			  // for mozilla, hold first finger and draw with the second
+			  if (e.touches.length > 1) { 
+			  	touch = e.touches[1];
+			  	console.log('second finger');
+			  }
+			  else
+			  	console.log('one finger only');
+			  
 		  	  var mouseEvent = new MouseEvent("mousemove", {
 		      	clientX: touch.clientX,//typeof touch.offsetX !== 'undefined' ? touch.offsetX : touch.layerX,
 				clientY: touch.clientY//typeof touch.offsetY !== 'undefined' ? touch.offsetY : touch.layerY
