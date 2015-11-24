@@ -239,8 +239,11 @@ angular.module('main', [])
 			// mousemove paint functions
 			var paint_pencil = function(e) {
 
-				mouse.x = typeof e.offsetX !== 'undefined' ? e.offsetX : e.layerX;
-				mouse.y = typeof e.offsetY !== 'undefined' ? e.offsetY : e.layerY;
+				//mouse.x = typeof e.offsetX !== 'undefined' ? e.offsetX : e.layerX;
+				//mouse.y = typeof e.offsetY !== 'undefined' ? e.offsetY : e.layerY;
+				var rect = temp_canvas.getBoundingClientRect();
+				mouse.x = e.clientX - rect.left;
+				mouse.y = e.clientY - rect.top;
 				//console.log(mouse.x + " "+mouse.y);
 				// Saving all the points in an array
 				// ppts is for the smoothness of the pencil drawings, o/w it'll be jarred
@@ -270,8 +273,11 @@ angular.module('main', [])
 			
 			var paint_line = function(e) {
 
-				mouse.x = typeof e.offsetX !== 'undefined' ? e.offsetX : e.layerX;
-				mouse.y = typeof e.offsetY !== 'undefined' ? e.offsetY : e.layerY;	
+				//mouse.x = typeof e.offsetX !== 'undefined' ? e.offsetX : e.layerX;
+				//mouse.y = typeof e.offsetY !== 'undefined' ? e.offsetY : e.layerY;	
+				var rect = temp_canvas.getBoundingClientRect();
+				mouse.x = e.clientX - rect.left;
+				mouse.y = e.clientY - rect.top;
 				// Tmp canvas is always cleared up before drawing.
 		    	temp_ctx.clearRect(0, 0, temp_canvas.width, temp_canvas.height);
 		 
@@ -283,8 +289,11 @@ angular.module('main', [])
 			}
 
 			var paint_square = function(e) {
-				mouse.x = typeof e.offsetX !== 'undefined' ? e.offsetX : e.layerX;
-				mouse.y = typeof e.offsetY !== 'undefined' ? e.offsetY : e.layerY;	
+				//mouse.x = typeof e.offsetX !== 'undefined' ? e.offsetX : e.layerX;
+				//mouse.y = typeof e.offsetY !== 'undefined' ? e.offsetY : e.layerY;	
+				var rect = temp_canvas.getBoundingClientRect();
+				mouse.x = e.clientX - rect.left;
+				mouse.y = e.clientY - rect.top;
 				// Tmp canvas is always cleared up before drawing.
 		    	temp_ctx.clearRect(0, 0, temp_canvas.width, temp_canvas.height);
 		 		temp_ctx.beginPath();
@@ -299,8 +308,11 @@ angular.module('main', [])
 			}
 
 			var paint_circle = function(e) {
-				mouse.x = typeof e.offsetX !== 'undefined' ? e.offsetX : e.layerX;
-				mouse.y = typeof e.offsetY !== 'undefined' ? e.offsetY : e.layerY;	
+				//mouse.x = typeof e.offsetX !== 'undefined' ? e.offsetX : e.layerX;
+				//mouse.y = typeof e.offsetY !== 'undefined' ? e.offsetY : e.layerY;	
+				var rect = temp_canvas.getBoundingClientRect();
+				mouse.x = e.clientX - rect.left;
+				mouse.y = e.clientY - rect.top;
 				// Tmp canvas is always cleared up before drawing.
 		    	temp_ctx.clearRect(0, 0, temp_canvas.width, temp_canvas.height);
 		 
@@ -321,8 +333,11 @@ angular.module('main', [])
 			}
 
 			var paint_ellipse = function(e) {
-				mouse.x = typeof e.offsetX !== 'undefined' ? e.offsetX : e.layerX;
-				mouse.y = typeof e.offsetY !== 'undefined' ? e.offsetY : e.layerY;	
+				//mouse.x = typeof e.offsetX !== 'undefined' ? e.offsetX : e.layerX;
+				//mouse.y = typeof e.offsetY !== 'undefined' ? e.offsetY : e.layerY;	
+				var rect = temp_canvas.getBoundingClientRect();
+				mouse.x = e.clientX - rect.left;
+				mouse.y = e.clientY - rect.top;
 				// Tmp canvas is always cleared up before drawing.
 		    	temp_ctx.clearRect(0, 0, temp_canvas.width, temp_canvas.height);
 		 
@@ -345,8 +360,11 @@ angular.module('main', [])
 			}
 
 			var move_eraser = function(e){
-				mouse.x = typeof e.offsetX !== 'undefined' ? e.offsetX : e.layerX;
-				mouse.y = typeof e.offsetY !== 'undefined' ? e.offsetY : e.layerY;	
+				//mouse.x = typeof e.offsetX !== 'undefined' ? e.offsetX : e.layerX;
+				//mouse.y = typeof e.offsetY !== 'undefined' ? e.offsetY : e.layerY;	
+				var rect = temp_canvas.getBoundingClientRect();
+				mouse.x = e.clientX - rect.left;
+				mouse.y = e.clientY - rect.top;
 				// Tmp canvas is always cleared up before drawing.
 				temp_ctx.clearRect(0, 0, temp_canvas.width, temp_canvas.height);
 				var tmp_lw = temp_ctx.lineWidth;
@@ -365,8 +383,11 @@ angular.module('main', [])
 			var paint_text = function(e) {
 				// Tmp canvas is always cleared up before drawing.
 		    	temp_ctx.clearRect(0, 0, temp_canvas.width, temp_canvas.height);
-		     	mouse.x = typeof e.offsetX !== 'undefined' ? e.offsetX : e.layerX;
-				mouse.y = typeof e.offsetY !== 'undefined' ? e.offsetY : e.layerY;	
+		     	//mouse.x = typeof e.offsetX !== 'undefined' ? e.offsetX : e.layerX;
+				//mouse.y = typeof e.offsetY !== 'undefined' ? e.offsetY : e.layerY;	
+				var rect = temp_canvas.getBoundingClientRect();
+				mouse.x = e.clientX - rect.left;
+				mouse.y = e.clientY - rect.top;
 
 		    	var x = Math.min(mouse.x, start_mouse.x);
 		    	var y = Math.min(mouse.y, start_mouse.y);
@@ -382,8 +403,11 @@ angular.module('main', [])
 			}
 
 			var paint_eraser = function(e) {
-				mouse.x = typeof e.offsetX !== 'undefined' ? e.offsetX : e.layerX;
-				mouse.y = typeof e.offsetY !== 'undefined' ? e.offsetY : e.layerY;	
+				//mouse.x = typeof e.offsetX !== 'undefined' ? e.offsetX : e.layerX;
+				//mouse.y = typeof e.offsetY !== 'undefined' ? e.offsetY : e.layerY;	
+				var rect = temp_canvas.getBoundingClientRect();
+				mouse.x = e.clientX - rect.left;
+				mouse.y = e.clientY - rect.top;
 				// erase from the main ctx
 		    	ctx.clearRect(mouse.x, mouse.y, eraser_width, eraser_width);
 			}
@@ -395,8 +419,14 @@ angular.module('main', [])
 			// Event listeners
 			// Mouse-Down 
 			temp_canvas.addEventListener('mousedown', function(e) {	
-				mouse.x = typeof e.offsetX !== 'undefined' ? e.offsetX : e.layerX;
-				mouse.y = typeof e.offsetY !== 'undefined' ? e.offsetY : e.layerY;
+				
+				//mouse.x = typeof e.offsetX !== 'undefined' ? e.offsetX : e.layerX;
+				//mouse.y = typeof e.offsetY !== 'undefined' ? e.offsetY : e.layerY;
+				var rect = temp_canvas.getBoundingClientRect();
+				mouse.x = e.clientX - rect.left;
+				mouse.y = e.clientY - rect.top;
+				//console.log('mouseX: '+mouse.x+' mouseY: '+mouse.y)
+
 				start_mouse.x = mouse.x;
 		    	start_mouse.y = mouse.y;	
 		    	temp_ctx.clearRect(0, 0, temp_canvas.width, temp_canvas.height);
@@ -678,18 +708,19 @@ angular.module('main', [])
 				return 'white';
 			}
 
-
 			// touch
 			// Prevent scrolling when touching the canvas
 			temp_canvas.addEventListener("touchstart", function (e) {
 			    e.preventDefault();
-			    
+				e.stopPropagation();
+
 			    var touch = e.touches[0];
+
 			    var mouseEvent = new MouseEvent("mousedown", {
 				    clientX: touch.clientX,//typeof touch.offsetX !== 'undefined' ? touch.offsetX : touch.layerX,
 				    clientY: touch.clientY//typeof touch.offsetY !== 'undefined' ? touch.offsetY : touch.layerY
 			    });
-			    
+
 			    temp_canvas.dispatchEvent(mouseEvent);
 
 			}, false);
@@ -704,7 +735,8 @@ angular.module('main', [])
 
 			temp_canvas.addEventListener("touchmove", function (e) {
 			  e.preventDefault();
-
+			  e.stopPropagation();
+			  
 			  var touch = e.touches[0];
 		  	  var mouseEvent = new MouseEvent("mousemove", {
 		      	clientX: touch.clientX,//typeof touch.offsetX !== 'undefined' ? touch.offsetX : touch.layerX,
