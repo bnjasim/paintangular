@@ -191,11 +191,11 @@ angular.module('main', [])
 				if (c) {
 					ctx.clearRect(0, 0, temp_canvas.width, temp_canvas.height);
 					// keep the image in the undo_canvas
-					//undo_canvas_top = next_undo_canvas(undo_canvas_top);
-					//var uctx = undo_canvas[undo_canvas_top]['uctx'];
-					//uctx.clearRect(0, 0, canvas.width, canvas.height);
-					//uctx.drawImage(canvas, 0, 0);
-					//undo_canvas[undo_canvas_top]['redoable'] = false;
+					undo_canvas_top = next_undo_canvas(undo_canvas_top);
+					var uctx = undo_canvas[undo_canvas_top]['uctx'];
+					uctx.clearRect(0, 0, canvas.width, canvas.height);
+					uctx.drawImage(canvas, 0, 0);
+					undo_canvas[undo_canvas_top]['redoable'] = false;
 
 					paintCtrl.noClear();
 				}
@@ -789,21 +789,8 @@ angular.module('main', [])
 				console.log('Event listener added');
 				// it can't be dragger.addEventListener - it only decrease in size
 				document.addEventListener('mousemove', resize_canvas, false);
-				/*keep_ctx.drawImage(canvas, 0, 0);				
-
-				if (!flag) {
-					element[0].style.height = '200px';
-					canvas.height = 200;
-					temp_canvas.height = 200;
-					flag = true;
-				}
-				else {
-					element[0].style.height = '400px';
-					canvas.height = 400;
-					temp_canvas.height = 400;
-					flag = false;
-				}*/
-				//ctx.drawImage(keep_canvas, 0, 0);
+			
+			
 			});
 
 			document.addEventListener('mouseup', function(e) {
