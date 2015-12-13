@@ -431,8 +431,8 @@ angular.module('main', [])
 				//mouse.x = typeof e.offsetX !== 'undefined' ? e.offsetX : e.layerX;
 				//mouse.y = typeof e.offsetY !== 'undefined' ? e.offsetY : e.layerY;
 				var rect = temp_canvas.getBoundingClientRect();
-				mouse.x = e.clientX - rect.left;
-				mouse.y = e.clientY - rect.top;
+				mouse.x = Math.floor(e.clientX - rect.left);
+				mouse.y = Math.floor(e.clientY - rect.top);
 				//console.log('mouseX: '+mouse.x+' mouseY: '+mouse.y)
 
 				start_mouse.x = mouse.x;
