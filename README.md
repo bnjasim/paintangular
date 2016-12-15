@@ -1,6 +1,8 @@
 # PaintAngular
 HTML5 Canvas based paint application as an angularjs directive
 
+see demo: (http://cslab.org/paint)
+
 Related project: (https://github.com/bnjasim/paint-application-javascript)
 
 Requirements:
